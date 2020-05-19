@@ -49,3 +49,64 @@
 
 #### 1.1.7 实例：采用牛顿法求平方根
 
+书中的`good-enough?`做法
+
+```lisp
+;
+(define (sqrt-iter guess x)
+  (if (good-enough? guess  x)
+      guess
+      (sqrt-iter (improve guess x)
+                 x)))
+
+; y方 = x
+; 这里的good-enough? 的 x 是一个固定的值 而guess 是一个变化的值
+; 每次将变化的guess的平方于固定的x进行差值比较
+ (define (good-enough? guess x)
+   (< (abs (- (square guess) x)) 0.001))
+
+
+(define (square x)
+  (* x x))
+
+(define (improve guess x)
+  (average guess (/ x guess)))
+
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (sqrt x)
+  (sqrt-iter 1.0 x))
+
+(sqrt 2)
+```
+
+练习`1.7`的`good-enough?`
+
+```lisp
+
+; 传入的参数是平均值 而不是 x 因为x是固定的值 这里的good-enough? 需要做的是对改变的值得比较
+(define (sqrt-iter guess x)
+  (if (good-enough? guess (improve guess x))
+     (improve guess x)
+      (sqrt-iter (improve guess x) x)))
+; 这里的oldVal 和 newVal 都是变化的值
+; oldVal 是不够好之后 改进的值 而 newVal是提前优化的值
+(define (good-enough? oldVal newVal)
+  (< (/ (abs (- newVal oldVal)) oldVal) 0.01))
+
+(define (improve guess x)
+  (average guess x))
+
+(define (average guess x)
+  (/ (+ guess (/ x guess)) 2))
+
+(define (square x)
+  (* x x))
+
+(define (sqrt x)
+  (sqrt-iter 1.0 x))
+
+(sqrt 2)
+```
+
