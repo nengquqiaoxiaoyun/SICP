@@ -218,7 +218,14 @@
 
 采用迭代求值有如下公式：
 
-`(row col) = row! / col!⋅(row − col)!`
+```lisp
+(row col) = row! / col!⋅(row − col)!
+即：
+(/ (factrial row)
+             (* (factrial col) (factrial (- row col))))
+```
+
+---
 
 ```lisp
 (define (factrial n)
