@@ -210,3 +210,34 @@
                (cc (- amount (kind n)) n)))))
 ```
 
+##### 帕斯卡三角形
+
+采用递归求某行某列的元素有如下公式：
+
+ `(row col) = (row−1 col−1) + (row − 1 col) (row col) = (row − 1 col − 1) + (row − 1  col)` ，
+
+采用迭代求值有如下公式：
+
+`(row col) = row! / col!⋅(row − col)!`
+
+```lisp
+(define (factrial n)
+  (fac-iter 1 1 n))
+
+(define (fac-iter count product max-counter)
+  (if (> count max-counter)
+      product
+      (fac-iter (+ count 1) (* count product)  max-counter )))
+
+(define (pascal row col)
+  (cond  ((or (> col row) (< col 0) (< row 0) )
+        (error "invalid value"))
+         (else   (/ (factrial row)
+     (* (factrial col) (factrial (- row col)))))
+))
+
+(pascal 0 0)
+```
+
+注意这里是从第`0`个开始的 
+
