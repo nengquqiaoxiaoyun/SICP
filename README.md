@@ -214,7 +214,17 @@
 
 采用递归求某行某列的元素有如下公式：
 
- `(row col) = (row−1 col−1) + (row − 1 col) (row col) = (row − 1 col − 1) + (row − 1  col)` ，
+ `(row col) = (row − 1, col − 1) + (row − 1, col) ` 
+
+```Lisp
+(define (pascal row col)
+    (cond ((> col row)
+            (error "unvalid col value"))
+          ((or (= col 0) (= row col))
+            1)
+          (else (+ (pascal (- row 1) (- col 1))
+                   (pascal (- row 1) col)))))
+```
 
 采用迭代求值有如下公式：
 
@@ -263,4 +273,29 @@
 用这一方法对于指数为2的乘幂都可以用。我们通过以下规则，借助于连续求平方完成一般的乘幂计算：
 
 ![img](assets/ch1-Z-G-23.png)
+
+#### 练习1.19
+
+将T*pq*看作是`p=0,q=1`的特殊情况，其中T*pq* 是对偶 (*a*,*b*) 按照 *a* ![img](assets/book-Z-G-D-14.gif) *bq* + *aq* + *ap* and *b* ![img](assets/book-Z-G-D-14.gif) *bp* + *aq*的规则变换
+
+![image-20200529103221112](assets/image-20200529103221112.png)
+
+### 1.2.5 最大公约数
+
+如果`r`是`a`除以`b`的余数，那么a和b的公约数正好也是b和r的公约数，因此有等式：
+
+​						*`	GCD(a, b) = GCD(b, r)`*
+
+这样就把一个GCD的计算问题连续地规约到越来越小的整数对的GCD的计算问题。
+
+![img](assets/ch1-Z-G-25.gif)
+
+反复执行这种规约，最终将产生一个数对，其中第二个数是0，此事的GCD就是另一个数。这一计算GCD的方法称为欧几里得算法。
+
+```Lisp
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+```
 
