@@ -280,7 +280,7 @@
 
 ![image-20200529103221112](assets/image-20200529103221112.png)
 
-### 1.2.5 最大公约数
+#### 1.2.5 最大公约数
 
 如果`r`是`a`除以`b`的余数，那么a和b的公约数正好也是b和r的公约数，因此有等式：
 
@@ -297,5 +297,68 @@
   (if (= b 0)
       a
       (gcd b (remainder a b))))
+```
+
+#### 1.2.6 实例: 素数检测
+
+##### 寻找因子
+
+该方法通过找到给定数`n`的最小整数因子，当`n`是自己的最小因子则`n`是素数
+
+```Lisp
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+```
+
+##### 费马测试
+
+费马小定理：如果n是素数，`a`是小于`n`的任意整数，那么`a`的`n`次方与`a`，模`n`同余
+
+对于给定的整数`n`，随机取一个`a<n`并计算出a的n次方取模`n`的余数。如果得到的结果不等于`a`，则`n`不为素数。如果结果等于a，那么`n`就很有可能是素数。通过不停的取`a`并采用同样的方式验证，如果满足上述等式，那么我们对于`n`是素数就有更大的信心
+
+
+
+以下过程用来计算**一个数的幂对另一个数取模**的结果
+
+```Lisp
+; base 的 exp次幂 对 m取模的结果
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m))
+                    m))
+        (else
+         (remainder (* base (expmod base (- exp 1) m))
+                    m))))
+```
+
+以下过程用来比对随机数`a`是否等于`a`的`n`次幂取模的余数
+
+```Lisp
+; 检查a的n次幂mod n是否等于a
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+```
+
+最后按照给定的次数运行上述的检查，如果每次检查都成功，这一过程的值就为真
+
+```Lisp
+(define (fast-prime? n times)
+  (cond ((= times 0) #t)
+       ((fermat-test n) (fast-prime? n (- times 1)))
+        (else #f)))
 ```
 
